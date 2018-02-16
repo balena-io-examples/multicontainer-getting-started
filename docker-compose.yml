@@ -1,0 +1,14 @@
+version: '2'
+services:
+  frontend:
+    build: ./frontend
+    expose:
+      - "80"
+  proxy:
+    build: ./haproxy
+    ports:
+      - "80:80"
+  data1:
+    build: ./data1
+    expose:
+      - "8080"

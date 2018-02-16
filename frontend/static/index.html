@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <title>Live Data</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+    <!--
+    Highcharts plotting example is based on:
+    http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/dynamic-click-to-add/
+    -->
+  <script>
+  $(function () {
+    var chart = new Highcharts.Chart({
+        chart: {
+            type: 'scatter',
+            margin: [70, 50, 60, 80],
+            renderTo: 'container'
+        },
+        title: {
+            text: 'CPU Temperature Feed'
+        },
+        subtitle: {
+            text: 'Plotting CPU Temperature in real-time using websockets.'
+        },
+        xAxis: {
+            gridLineWidth: 1,
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            maxZoom: 60
+        },
+        yAxis: {
+            title: {
+                text: 'Value'
+            },
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            maxZoom: 60,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        plotOptions: {
+            series: {
+                lineWidth: 1,
+            }
+        },
+        series: [{
+            data: [[0]]
+        }]
+    });
+
+    var socket = io.connect( window.location.protocol + '//' + window.location.hostname);
+
+    socket.on('temperature', function(data) {
+      var series = chart.series[0];
+      series.addPoint([data.t], true, series.data.length > 100);
+    });
+  });
+  </script>
+  <body>
+    <div id="container" style="min-width: 310px; height: 400px; max-width: 700px; margin: 0 auto"></div>
+  </body>
+</html>
