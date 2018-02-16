@@ -6,9 +6,12 @@ services:
       - "80"
   proxy:
     build: ./haproxy
+    depends_on:
+      - frontend
+      - data
     ports:
       - "80:80"
-  data1:
-    build: ./data1
+  data:
+    build: ./data
     expose:
       - "8080"
