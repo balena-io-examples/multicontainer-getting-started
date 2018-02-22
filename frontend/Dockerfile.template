@@ -1,4 +1,4 @@
-FROM arm32v6/node:8.9-alpine
+FROM resin/%%RESIN_MACHINE_NAME%%-alpine-node:8.9.4-slim
 
 # Defines our working directory in container
 WORKDIR /usr/src/app
