@@ -8,7 +8,7 @@ To get this project up and running, you'll need to [sign up](https://dashboard.r
 
 Once you are set up, clone this repo locally:
 ```
-$ git clone git@github.com:resin-projects/multicontainer-getting-started.git
+$ git clone git@github.com:resin-io-projects/multicontainer-getting-started.git
 ```
 Copy the command in the upper-right corner of your application dashboard to add your remote repository:
 ```
