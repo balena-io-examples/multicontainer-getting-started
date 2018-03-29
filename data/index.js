@@ -8,15 +8,33 @@ const {
 
 server.listen(8080);
 
+const getCpuLoad = (socket) => {
+  exec('cat /proc/loadavg', (err, text) => {
+    if (err) {
+      throw err;
+    }
+    // Get overall average from last minute
+    const load = parseFloat(text.match(/(\d+\.\d+)\s+/)[1]);
+    socket.emit('loadavg', {
+      onemin: load
+    });
+  });
+};
 
-let getCpuTemp = function(socket) {
-  'use strict';
-  exec('cat /sys/class/thermal/thermal_zone*/temp', (err, stdout) => {
-    if (err) throw err;
-    let data = {
-      t: parseFloat(stdout) / 1000
-    };
-    socket.emit('temperature', data);
+const getMemoryInfo = (socket) => {
+  exec('cat /proc/meminfo', (err, text) => {
+    if (err) {
+      throw err;
+    }
+    // Get overall average from last minute
+    const matchTotal = text.match(/MemTotal:\s+([0-9]+)/);
+    const matchFree = text.match(/MemAvailable:\s+([0-9]+)/);
+    const total = parseInt(matchTotal[1], 10);
+    const free = parseInt(matchFree[1], 10);
+    const percentageUsed = (total - free) / total * 100;
+    socket.emit('memory', {
+      used: percentageUsed
+    });
   });
 };
 
@@ -24,7 +42,8 @@ io.on('connection', function(socket) {
   'use strict';
   console.log('a user connected');
   let dataLoop = setInterval(function() {
-    getCpuTemp(socket);
+    getCpuLoad(socket);
+    getMemoryInfo(socket);
   }, 1000);
 	socket.on('disconnect', function() {
       console.log('a user disconnected');
