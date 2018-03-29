@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
   <title>Live Data</title>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src="highcharts.js"></script>
+  <script src="jquery-1.12.0.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 
     <!--
@@ -13,50 +13,76 @@
   $(function () {
     var chart = new Highcharts.Chart({
         chart: {
-            type: 'scatter',
-            margin: [70, 50, 60, 80],
+            zoomType: 'xy',
+            margin: [80, 80, 80, 80],
             renderTo: 'container'
         },
         title: {
-            text: 'CPU Temperature Feed'
+            text: 'CPU Load Average & Memory Usage',
         },
         subtitle: {
-            text: 'Plotting CPU Temperature in real-time using websockets.'
+            text: 'Plotting CPU Load and Memory Info in real-time using websockets.'
         },
         xAxis: {
-            gridLineWidth: 1,
-            minPadding: 0.2,
-            maxPadding: 0.2,
+            gridLineWidth: 5,
             maxZoom: 60
         },
-        yAxis: {
+        yAxis: [{
             title: {
-                text: 'Value'
+                text: 'Memory %age'
             },
-            minPadding: 0.2,
-            maxPadding: 0.2,
-            maxZoom: 60,
+            min: 0,
+            max: 100,
             plotLines: [{
                 value: 0,
                 width: 1,
-                color: '#808080'
-            }]
+                colour: '#808800',
+            }],
+            opposite: true
         },
+        {
+            title: {
+                text: 'LoadAvg'
+            },
+            min: 0,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                colour: '#008888',
+                zIndex: 0
+            }]
+        }],
         plotOptions: {
-            series: {
-                lineWidth: 1,
+            column: {
+                pointPadding: 0,
+                groupPadding: 0
             }
         },
         series: [{
-            data: [[0]]
+            name: 'MemInfo',
+            type: 'column',
+            color: '#008800',
+            grouping: false,
+            yAxis: 0,
+            data: []
+        },
+        {
+            name: 'CpuLoad',
+            type: 'spline',
+            yAxis: 1,
+            data: []
         }]
     });
 
     var socket = io.connect( window.location.protocol + '//' + window.location.hostname);
 
-    socket.on('temperature', function(data) {
-      var series = chart.series[0];
-      series.addPoint([data.t], true, series.data.length > 100);
+    socket.on('loadavg', (data) => {
+        var series = chart.series[1];
+        series.addPoint([data.onemin], true, series.data.length > 100);
+    });
+    socket.on('memory', (data) => {
+        var series = chart.series[0];
+        series.addPoint([data.used], true, series.data.length > 100);
     });
   });
   </script>

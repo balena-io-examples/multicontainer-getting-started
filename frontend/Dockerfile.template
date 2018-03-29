@@ -1,7 +1,14 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-alpine-node:8.9.4-slim
-
+FROM resin/%%RESIN_MACHINE_NAME%%-node:7-slim
 # Defines our working directory in container
 WORKDIR /usr/src/app
+
+RUN apt-get update && \
+    apt-get install -yq wget && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p static && \
+    wget https://code.jquery.com/jquery-1.12.0.min.js -O static/jquery-1.12.0.min.js && \
+    wget https://code.highcharts.com/highcharts.js -O static/highcharts.js
 
 # Copies the package.json first for better cache on later pushes
 COPY package.json package.json
