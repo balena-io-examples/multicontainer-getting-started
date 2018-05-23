@@ -6,9 +6,12 @@ RUN apt-get update && \
     apt-get install -yq wget && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p static && \
-    wget https://code.jquery.com/jquery-1.12.0.min.js -O static/jquery-1.12.0.min.js && \
-    wget https://code.highcharts.com/highcharts.js -O static/highcharts.js
+ENV JQUERY_VERSION=3.3.1
+ENV REQUIREJS_VERSION=2.3.5
+RUN mkdir -p static/js && \
+    wget "https://code.jquery.com/jquery-${JQUERY_VERSION}.min.js" -O static/js/jquery.min.js && \
+    wget https://code.highcharts.com/highcharts.js -O static/js/highcharts.js && \
+    wget "http://requirejs.org/docs/release/${REQUIREJS_VERSION}/minified/require.js" -O static/js/require.js
 
 # Copies the package.json first for better cache on later pushes
 COPY package.json package.json

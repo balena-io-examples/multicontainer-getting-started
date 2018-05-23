@@ -1,91 +1,11 @@
 <!doctype html>
 <html>
-  <title>Live Data</title>
-  <script src="highcharts.js"></script>
-  <script src="jquery-1.12.0.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-
+    <title>Live Data</title>
     <!--
     Highcharts plotting example is based on:
     http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/highcharts/demo/dynamic-click-to-add/
     -->
-  <script>
-  $(function () {
-    var chart = new Highcharts.Chart({
-        chart: {
-            zoomType: 'xy',
-            margin: [80, 80, 80, 80],
-            renderTo: 'container'
-        },
-        title: {
-            text: 'CPU Load Average & Memory Usage',
-        },
-        subtitle: {
-            text: 'Plotting CPU Load and Memory Info in real-time using websockets.'
-        },
-        xAxis: {
-            gridLineWidth: 5,
-            maxZoom: 60
-        },
-        yAxis: [{
-            title: {
-                text: 'Memory %age'
-            },
-            min: 0,
-            max: 100,
-            plotLines: [{
-                value: 0,
-                width: 1,
-                colour: '#808800',
-            }],
-            opposite: true
-        },
-        {
-            title: {
-                text: 'LoadAvg'
-            },
-            min: 0,
-            plotLines: [{
-                value: 0,
-                width: 1,
-                colour: '#008888',
-                zIndex: 0
-            }]
-        }],
-        plotOptions: {
-            column: {
-                pointPadding: 0,
-                groupPadding: 0
-            }
-        },
-        series: [{
-            name: 'MemInfo',
-            type: 'column',
-            color: '#008800',
-            grouping: false,
-            yAxis: 0,
-            data: []
-        },
-        {
-            name: 'CpuLoad',
-            type: 'spline',
-            yAxis: 1,
-            data: []
-        }]
-    });
-
-    var socket = io.connect( window.location.protocol + '//' + window.location.hostname);
-
-    socket.on('loadavg', (data) => {
-        var series = chart.series[1];
-        series.addPoint([data.onemin], true, series.data.length > 100);
-    });
-    socket.on('memory', (data) => {
-        var series = chart.series[0];
-        series.addPoint([data.used], true, series.data.length > 100);
-    });
-  });
-  </script>
+  <script data-main="js/app" src="js/require.js"></script>
   <body>
     <div id="container" style="min-width: 310px; height: 400px; max-width: 700px; margin: 0 auto"></div>
   </body>
