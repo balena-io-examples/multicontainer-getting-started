@@ -14,10 +14,13 @@ const getCpuLoad = (socket) => {
       throw err;
     }
     // Get overall average from last minute
-    const load = parseFloat(text.match(/(\d+\.\d+)\s+/)[1]);
-    socket.emit('loadavg', {
-      onemin: load
-    });
+    const matchLoad = text.match(/(\d+\.\d+)\s+/);
+    if (matchLoad) {
+      const load = parseFloat(matchLoad[1]);
+      socket.emit('loadavg', {
+        onemin: load
+      });
+    }
   });
 };
 
@@ -28,13 +31,15 @@ const getMemoryInfo = (socket) => {
     }
     // Get overall average from last minute
     const matchTotal = text.match(/MemTotal:\s+([0-9]+)/);
-    const matchFree = text.match(/MemAvailable:\s+([0-9]+)/);
-    const total = parseInt(matchTotal[1], 10);
-    const free = parseInt(matchFree[1], 10);
-    const percentageUsed = (total - free) / total * 100;
-    socket.emit('memory', {
-      used: percentageUsed
-    });
+    const matchFree = text.match(/MemFree:\s+([0-9]+)/);
+    if (matchTotal && matchFree) {
+      const total = parseInt(matchTotal[1], 10);
+      const free = parseInt(matchFree[1], 10);
+      const percentageUsed = (total - free) / total * 100;
+      socket.emit('memory', {
+        used: percentageUsed
+      });
+    }
   });
 };
 
