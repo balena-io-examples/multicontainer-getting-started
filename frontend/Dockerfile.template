@@ -2,9 +2,7 @@ FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-node:10-stretch-run
 # Defines our working directory in container
 WORKDIR /usr/src/app
 
-RUN apt-get update && \
-    apt-get install -yq wget && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN install_packages wget
 
 ENV JQUERY_VERSION=3.3.1
 ENV REQUIREJS_VERSION=2.3.5
