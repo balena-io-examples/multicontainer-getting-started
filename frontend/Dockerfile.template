@@ -1,10 +1,10 @@
-FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-node:10-stretch-run
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian-node:12-buster-run
 # Defines our working directory in container
 WORKDIR /usr/src/app
 
 RUN install_packages wget
 
-ENV JQUERY_VERSION=3.3.1
+ENV JQUERY_VERSION=3.4.1
 ENV REQUIREJS_VERSION=2.3.5
 ENV HIGHCHARTS_VERSION=7.0.3
 RUN mkdir -p static/js && \
