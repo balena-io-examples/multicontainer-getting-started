@@ -1,4 +1,4 @@
-FROM balenalib/%%BALENA_ARCH%%-debian-node:14-stretch-run
+FROM balenalib/%%BALENA_ARCH%%-debian-node:14-bullseye-run
 # Defines our working directory in container
 WORKDIR /usr/src/app
 
