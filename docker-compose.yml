@@ -1,17 +1,24 @@
-version: '2'
+version: '2.1'
+
+volumes:
+  service-locks:
+
 services:
   frontend:
     build: ./frontend
+    volumes:
+      - service-locks:/shared-locks
     expose:
       - "80"
   proxy:
     build: ./haproxy
-    depends_on:
-      - frontend
-      - data
+    volumes:
+      - service-locks:/shared-locks
     ports:
       - "80:80"
   data:
     build: ./data
+    volumes:
+      - service-locks:/shared-locks
     expose:
       - "8080"

@@ -1,3 +1,8 @@
 FROM i386/haproxy:1-alpine
 
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+COPY start.sh /usr/local/bin/start.sh
+
+RUN apk add --no-cache bash util-linux
+
+CMD ["bash", "/usr/local/bin/start.sh"]

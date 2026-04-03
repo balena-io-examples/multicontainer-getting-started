@@ -1,25 +1,16 @@
-FROM balenalib/%%BALENA_ARCH%%-debian-node:14-bullseye-run
-# Defines our working directory in container
+FROM python:3.11-slim-bookworm
+
 WORKDIR /usr/src/app
 
-RUN install_packages wget
+RUN apt-get update && apt-get install -y --no-install-recommends util-linux && rm -rf /var/lib/apt/lists/*
 
-ENV JQUERY_VERSION=3.3.1
-ENV REQUIREJS_VERSION=2.3.6
-ENV HIGHCHARTS_VERSION=7.0.3
-RUN mkdir -p static/js && \
-    wget "https://code.jquery.com/jquery-${JQUERY_VERSION}.min.js" -O static/js/jquery.min.js && \
-    wget "https://code.highcharts.com/${HIGHCHARTS_VERSION}/highcharts.js" -O static/js/highcharts.js && \
-    wget "https://unpkg.com/requirejs@${REQUIREJS_VERSION}/require.js" -O static/js/require.js
+RUN pip install --no-cache-dir uv
 
-# Copies the package.json first for better cache on later pushes
-COPY package.json package.json
+COPY requirements.txt requirements.txt
+RUN uv pip install --system --no-cache -r requirements.txt
 
-# This install npm dependencies on the resin.io build server,
-# making sure to clean up the artifacts it creates in order to reduce the image size.
-RUN JOBS=MAX npm install --production
-# This will copy all files in our root to the working  directory in the container
 COPY . ./
 
-# server.js will run when container starts up on the device
-CMD ["npm", "start"]
+EXPOSE 80
+
+CMD ["bash", "./start.sh"]

@@ -1,6 +1,8 @@
 # Getting started with multicontainer on balena
 
-This example will get you up and running quickly with a multicontainer setup on balena. The application creates a plot of your device's CPU load average and memory usage at the device's public URL, which is piped over using websockets. The system is composed of a simple static site server, a websocket server, and a proxy. These 3 components are defined in the [docker-compose.yml](docker-compose.yml) as services and are only given as much privilege as is needed.
+This example will get you up and running quickly with a multicontainer setup on balena. The application creates a simple chart of your device's CPU usage at the device's public URL (and also shows the 1-minute load average). The system is composed of a Python data API, a Streamlit frontend, and a proxy. These 3 components are defined in the [docker-compose.yml](docker-compose.yml) as services and are only given as much privilege as is needed.
+
+Because `depends_on` is not supported by balena, startup ordering is handled with shared `flock` lock files on a named volume. Each container has a small bash startup script that waits for required dependency locks before starting.
 
 To get this project up and running, you'll need to [sign up](https://dashboard.balena-cloud.com/signup) for a balena account, create a microservices or starter application, and provision a device (device specific instructions can be found in our [getting started guide](https://balena.io/docs/getting-started).
 
@@ -10,12 +12,8 @@ Once you are set up, clone this repo locally:
 ```
 $ git clone git@github.com:balena-io-projects/multicontainer-getting-started.git
 ```
-Copy the command in the upper-right corner of your application dashboard to add your remote repository:
+From the project directory, push the code to your balena application with the balena CLI:
 ```
-$ git remote add balena username@git.balena-cloud.com:username/myapp.git
-```
-Finally, push the code to the newly added remote:
-```
-$ git push balena master
+$ balena push <org-name>/<app-name>
 ```
 It should take a few minutes for your project to build. While you wait, you can enable device URLs, so you can see the server outside of our local network. This option can be found in the *Actions* drop down in your device dashboard.
