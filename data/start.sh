@@ -8,4 +8,4 @@ mkdir -p "$LOCK_DIR"
 exec 9>"$LOCK_FILE"
 flock -n 9
 
-uv run app.py
+python app.py
