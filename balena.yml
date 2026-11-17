@@ -1,0 +1,29 @@
+name: multicontainer-getting-started
+type: sw.application
+description: >-
+  The Docker Compose getting started guide on balenaOS: a Flask web app that
+  counts page refreshes, backed by Redis.
+post-provisioning: >-
+  ## Usage
+
+  Once your device is online, enable the public device URL (or browse to the
+  device's local IP on port 80). Each refresh bumps a counter stored in Redis.
+  The count is kept in a named volume, so it survives restarts and updates.
+assets:
+  repository:
+    type: blob.asset
+    data:
+      url: "https://github.com/balena-io-examples/multicontainer-getting-started"
+data:
+  defaultDeviceType: raspberrypi4-64
+  supportedDeviceTypes:
+    - raspberry-pi
+    - raspberrypi0-2w-64
+    - raspberrypi3
+    - raspberrypi3-64
+    - raspberrypi4-64
+    - raspberrypi5
+    - generic-aarch64
+    - genericx86-64-ext
+    - generic-amd64
+version: 1.0.5

@@ -1,17 +1,41 @@
-version: '2'
+version: "2.1"
+
 services:
-  frontend:
-    build: ./frontend
-    expose:
-      - "80"
-  proxy:
-    build: ./haproxy
-    depends_on:
-      - frontend
-      - data
+  web:
+    build: ./web
     ports:
-      - "80:80"
-  data:
-    build: ./data
-    expose:
-      - "8080"
+      # balena's public device URL proxies port 80
+      - "80:5000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    # Start order only. app.py retries in case redis isn't accepting
+    # connections yet.
+    depends_on:
+      - redis
+    networks:
+      - default
+      - backend
+
+  redis:
+    image: redis:7.4-alpine
+    # Snapshot to disk every 60s if anything changed, so the count survives
+    # power loss as well as a clean restart
+    command: ["redis-server", "--save", "60", "1"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - backend
+
+networks:
+  # redis is only reachable from web, with no route out of the device
+  backend:
+    internal: true
+
+volumes:
+  redis-data:
