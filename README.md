@@ -22,7 +22,7 @@ Hello from balena! I have been seen 3 time(s).
 
 ### With the button
 
-Click **Deploy with balena** above. It creates a fleet in your [balenaCloud](https://dashboard.balena-cloud.com/signup) account and builds the release for you. Then add a device to the fleet and flash it, following the [getting started guide](https://docs.balena.io/learn/getting-started/raspberrypi4-64/) for your board.
+Click **Deploy with balena** above. It creates a fleet in your [balenaCloud](https://dashboard.balena-cloud.com/signup) account and builds the release for you. Then add a device to the fleet and flash it, following the [getting started guide](https://docs.balena.io/learn/getting-started) for your board.
 
 ### With the balena CLI
 
@@ -33,7 +33,7 @@ balena login
 balena push <your-fleet>
 ```
 
-Once the release has built and your device has downloaded it, switch on the **Public device URL** in the device dashboard and open it. Or browse to the device's IP on your local network, on port 80.
+Once the release has built and your device has downloaded it, switch on the [public device URL](https://docs.balena.io/learn/manage/actions#public-device-url) in the device dashboard and open it. That's an HTTPS address balenaCloud gives the device, which forwards traffic to port 80 on it, so you can reach the app from anywhere without opening ports on your network. Or browse to the device's IP on your local network, on port 80.
 
 Little pro-tip: while you're iterating, put the device into [local mode](https://docs.balena.io/learn/develop/local-mode/) and run `balena push <device-ip>` to build and run on the device directly, without going through the cloud builders.
 
@@ -52,7 +52,7 @@ Then open <http://localhost>.
 Not much, which is the nice bit:
 
 - **No `.env` file.** balena doesn't read them. `REDIS_HOST` and `REDIS_PORT` are set in `docker-compose.yml`, and you can override them per fleet or per device as [environment variables](https://docs.balena.io/learn/manage/variables/) in the dashboard.
-- **Port 80 instead of 8000.** The public device URL proxies port 80, so `web` maps `80:5000`.
+- **Port 80 instead of 8000.** The [public device URL](https://docs.balena.io/learn/manage/actions#public-device-url) only forwards to port 80, so `web` maps `80:5000`.
 - **No `--debug` flag.** The Flask debugger allows code execution from the browser. That's fine on your laptop, much less fine on a device with a public URL.
 - **A retry loop in `app.py`.** balena honours `depends_on` for start order, but Redis can still be warming up when the first request lands. The app retries a few times rather than throwing an error.
 - **Redis saves more often.** Devices lose power without warning, so `redis-server --save 60 1` snapshots to the `redis-data` volume once a minute if the count has changed.
